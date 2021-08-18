@@ -5,14 +5,14 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator, ValidationError
 from rest_framework_simplejwt.serializers import PasswordField
 
-from backend.users.models import FoodgramUser, Follow
+from .models import FoodgramUser, Follow
 
 
 class UserSerializer(serializers.ModelSerializer):
     """
     FoodgramUser serializer with 'is_subscribed' field
     """
-    role = serializers.CharField(required=False)
+    #role = serializers.CharField(required=False)
 
     username = serializers.CharField(
         max_length=64,
@@ -71,3 +71,4 @@ class UserVerificationSerializer(serializers.ModelSerializer):
         if re.fullmatch(regex, value):
             return value
         raise ValidationError('The confirmation_code format is wrong')
+
