@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'colorfield',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'recipes',
     'users',
     'djoser',
@@ -79,6 +80,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
@@ -95,15 +97,15 @@ DATABASES = {
 }
 
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get('POSTGRES_NAME'),
-#         'USER': os.environ.get('POSTGRES_USER'),
-#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-#         'HOST': os.environ.get('DB_HOST'),
-#         'PORT': os.environ.get('DB_PORT'),
-#     }
-# }
+#        'default': {
+#            'ENGINE': 'django.db.backends.postgresql',
+#            'NAME': os.environ.get('POSTGRES_NAME'),
+#            'USER': os.environ.get('POSTGRES_USER'),
+#            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+#            'HOST': os.environ.get('DB_HOST'),
+#            'PORT': os.environ.get('DB_PORT'),
+#        }
+#    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
