@@ -9,9 +9,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from users.models import FoodgramUser
-from users.permissions import IsAdmin
-from users.serializers import (
+from .models import FoodgramUser
+from .permissions import IsAdmin
+from .serializers import (
     UserSerializer, EmailRegistrationSerializer, UserVerificationSerializer)
 
 
@@ -87,7 +87,7 @@ class UsersViewSet(viewsets.ViewSetMixin,
     queryset = FoodgramUser.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'
-    permission_classes = (IsYamdbAdmin, )
+    permission_classes = (IsAdmin, )
 
     @action(methods=['get', 'patch'], detail=False,
             permission_classes=[IsAuthenticated, ],

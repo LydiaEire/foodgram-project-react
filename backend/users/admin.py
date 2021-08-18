@@ -1,31 +1,35 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-FoodgramUser = get_user_model()
+from .models import FoodgramUser, Follow
 
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(admin.ModelAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ['id', 'username', 'email',
-                    'first_name', 'last_name', 'admin']
+                    'first_name', 'last_name', 'is_staff']
     list_filter = ['email', 'username']
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ()}),
-        ('Permissions', {'fields': ('admin',)}),
-    )
+         (None, {'fields': ('email', 'password')}),
+         ('Personal info', {'fields': ()}),
+         ('Permissions', {'fields': ('admin',)}),
+     )
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2')}
-         ),
-    )
+         (None, {
+             'classes': ('wide',),
+             'fields': ('email', 'password1', 'password2')}
+          ),
+     )
     search_fields = ['username']
     ordering = ['email']
     filter_horizontal = ()
 
 
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'author', 'created_at')
+    list_filter = ('created_at',)
+
+
 admin.site.register(FoodgramUser, UserAdmin)
+admin.site.register(Follow, FollowAdmin)

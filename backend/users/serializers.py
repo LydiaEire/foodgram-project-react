@@ -5,12 +5,12 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator, ValidationError
 from rest_framework_simplejwt.serializers import PasswordField
 
-from backend.users.models import FoodgramUser
+from backend.users.models import FoodgramUser, Follow
 
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Default FoodgramUser serializer
+    FoodgramUser serializer with 'is_subscribed' field
     """
     role = serializers.CharField(required=False)
 
@@ -25,13 +25,20 @@ class UserSerializer(serializers.ModelSerializer):
         min_length=5,
         validators=[UniqueValidator(queryset=FoodgramUser.objects.all())]
     )
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = FoodgramUser
         fields = [
-            'username', 'first_name', 'last_name', 'email', 'bio', 'role',
+            'username', 'first_name', 'last_name', 'email', 'is_subscribed', 'id',
         ]
         lookup_field = 'username'
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=request.user, author=obj).exists()
 
 
 class EmailRegistrationSerializer(serializers.ModelSerializer):
