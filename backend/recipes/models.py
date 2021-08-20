@@ -81,7 +81,7 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='RecipeIngredient',
+        through='IngredientInRecipe',
         blank=True,
         help_text='Fill out some ingredients and it\'s values'
     )
@@ -100,3 +100,104 @@ class Recipe(models.Model):
         verbose_name='Cooking time in minutes',
         validators=[MinValueValidator(1), ]
     )
+
+
+class TagsInRecipe(models.Model):
+    tag = models.ForeignKey(
+        Tag,
+        verbose_name='Тег в рецепте',
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = 'Теги в рецепте'
+        verbose_name_plural = verbose_name
+
+
+class IngredientInRecipe(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        verbose_name='RecipeIngredient'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
+    )
+    amount = models.PositiveSmallIntegerField(
+        null=True,
+        verbose_name='amount of ingredient'
+    )
+
+    class Meta:
+        verbose_name = 'amount of ingredient in recipe'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return f'{self.ingredient} in {self.recipe}'
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        FoodgramUser,
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='User'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorites',
+        verbose_name='recipe'
+    )
+    when_added = models.DateTimeField(
+        auto_now_add=True, verbose_name='Post date'
+    )
+
+    class Meta:
+        ordering = ['-when_added', ]
+        verbose_name = 'favourite'
+        verbose_name_plural = verbose_name
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'], name='unique_favourite'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user} added {self.recipe}'
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        FoodgramUser,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart',
+        verbose_name='User'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart',
+        verbose_name='recipe'
+    )
+    when_added = models.DateTimeField(
+        auto_now_add=True, verbose_name='post date'
+    )
+
+    class Meta:
+        verbose_name = 'cart'
+        verbose_name_plural = verbose_name
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'], name='unique_shopping_cart'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user} added {self.recipe}'
