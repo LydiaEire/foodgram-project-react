@@ -22,14 +22,14 @@ class IngredientInRecipeAdminInline(admin.TabularInline):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'author')
+    list_display = ('id', 'author')
     inlines = (IngredientInRecipeAdminInline, TagsInRecipeInline)
     search_fields = ('author', 'name')
-    list_filter = ('author', 'name', 'tags')
+    list_filter = ('author', 'tags')
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit')
+    list_display = ('id', 'name')
     list_filter = ('name',)
 
 
