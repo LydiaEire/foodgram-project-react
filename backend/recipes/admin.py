@@ -5,7 +5,7 @@ from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug',)
+    list_display = ('id', 'name', 'hexcolor', 'slug',)
     search_fields = ('name',)
     list_filter = ('name', 'slug')
     empty_value_display = '---'
@@ -22,14 +22,14 @@ class IngredientInRecipeAdminInline(admin.TabularInline):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'author')
+    list_display = ('id', 'name', 'author')
     inlines = (IngredientInRecipeAdminInline, TagsInRecipeInline)
     search_fields = ('author', 'name')
-    list_filter = ('author', 'tags')
+    list_filter = ('author', 'name', 'tags')
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'measurement_unit')
     list_filter = ('name',)
 
 

@@ -17,6 +17,7 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [AllowAny, ]
@@ -24,19 +25,20 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny, ]
     filter_class = IngredientFilter
-    search_fields = ('name',)
+    search_fields = ('name', )
     pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+
     queryset = Recipe.objects.all()
     permission_classes = [AdminOrAuthorOrReadOnly, ]
     filter_class = RecipeFilter
-    pagination_class = FoodgramPaginator
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -49,7 +51,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(APIView):
+class FavoriteViewSet(viewsets.ModelViewSet):
+
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, recipe_id):
@@ -80,7 +83,8 @@ class FavoriteViewSet(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShoppingCartViewSet(APIView):
+class ShoppingCartViewSet(viewsets.ModelViewSet):
+
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, recipe_id):
@@ -115,6 +119,7 @@ class ShoppingCartViewSet(APIView):
 
 @api_view(['GET'])
 def download_shopping_cart(request):
+
     user = request.user
     shopping_cart = user.shopping_cart.all()
     buying_list = {}

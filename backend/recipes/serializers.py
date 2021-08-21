@@ -3,7 +3,9 @@ from rest_framework import serializers
 
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag, TagsInRecipe)
-from backend.users.serializers import UserSerializer
+# from users.serializers import UserSerializer
+
+from drf_extra_fields.fields import Base64ImageField
 
 User = get_user_model()
 
@@ -34,7 +36,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 class ShowRecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
-    author = UserSerializer(read_only=True)
+    author = serializers.StringRelatedField()
     ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -76,7 +78,8 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
+    image = Base64ImageField(max_length=None, use_url=True)
+    author = serializers.StringRelatedField()
     ingredients = AddIngredientToRecipeSerializer(many=True)
     tags = serializers.SlugRelatedField(
         many=True,
@@ -161,6 +164,13 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('user', 'recipe')
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        return ShowRecipeAddedSerializer(
+            instance.recipe,
+            context={'request': request}
+        ).data
 
 
 class ShoppingCartSerializer(FavoriteSerializer):
