@@ -95,7 +95,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
 }
-
+RECIPES_LIMIT = 6
 DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,

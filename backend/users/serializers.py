@@ -1,38 +1,25 @@
-import re
-
-from django.core.validators import EmailValidator
+from django.contrib.auth import authenticate, get_user_model
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator, ValidationError
-from rest_framework_simplejwt.serializers import PasswordField
 
-from .models import FoodgramUser, Follow
+from recipes.models import Recipe
+from foodgram.settings import RECIPES_LIMIT
+from .models import Follow
+
+User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializerModified(UserSerializer):
     """
-    FoodgramUser serializer with 'is_subscribed' field
+    Describes modified UserSerializer, including
+    'is_subscribed' field
     """
-    #role = serializers.CharField(required=False)
 
-    username = serializers.CharField(
-        max_length=64,
-        min_length=5,
-        allow_blank=False,
-        trim_whitespace=True,
-        validators=[UniqueValidator(queryset=FoodgramUser.objects.all())]
-    )
-    email = serializers.EmailField(
-        min_length=5,
-        validators=[UniqueValidator(queryset=FoodgramUser.objects.all())]
-    )
     is_subscribed = serializers.SerializerMethodField()
 
-    class Meta:
-        model = FoodgramUser
-        fields = [
-            'username', 'first_name', 'last_name', 'email', 'is_subscribed', 'id',
-        ]
-        lookup_field = 'username'
+    class Meta(UserSerializer.Meta):
+        fields = ('email', 'username', 'id',
+                  'first_name', 'last_name', 'is_subscribed')
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -41,34 +28,129 @@ class UserSerializer(serializers.ModelSerializer):
         return Follow.objects.filter(user=request.user, author=obj).exists()
 
 
-class EmailRegistrationSerializer(serializers.ModelSerializer):
+class MyAuthTokenSerializer(serializers.Serializer):
     """
-    FoodgramUser specific serializer for registration page
+    Describes Auth serializer,that uses email-password to generate token.
     """
-    password = PasswordField(required=False)
-    username_field = 'email'
-
-    class Meta:
-        model = FoodgramUser
-        fields = ['email', 'password', ]
-
-
-class UserVerificationSerializer(serializers.ModelSerializer):
-    """
-    FoodgramUser specific serializer for activation page
-    """
-    confirmation_code = serializers.CharField()
-    email = serializers.EmailField(
-        validators=[EmailValidator(), ]
+    email = serializers.EmailField(label="Email")
+    password = serializers.CharField(
+        label="Password",
+        style={'input_type': 'password'},
+        trim_whitespace=False
     )
 
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        if email and password:
+            user = authenticate(request=self.context.get('request'),
+                                email=email, password=password)
+            if not user:
+                messsage = 'Неверные данные для входа.'
+                raise serializers.ValidationError(messsage, code='authorization')
+        else:
+            message = 'Авторизация производится по паролю и email.'
+            raise serializers.ValidationError(message, code='authorization')
+        attrs['user'] = user
+        return attrs
+
+
+class ShowRecipeAddedSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
-        model = FoodgramUser
-        fields = ['email', 'confirmation_code', ]
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+        read_only_fields = fields
 
-    def validate_confirmation_code(self, value):
-        regex = r'\w{6}-\w{32}'
-        if re.fullmatch(regex, value):
-            return value
-        raise ValidationError('The confirmation_code format is wrong')
+    def get_image(self, obj):
+        request = self.context.get('request')
+        photo_url = obj.image.url
+        return request.build_absolute_uri(photo_url)
 
+
+class FollowRecipeSerializer(serializers.ModelSerializer):
+    """
+    Describes Recipe Serializer, which used in FollowSerializer
+    """
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class ShowFollowSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count')
+        read_only_fields = fields
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return obj.follower.filter(user=obj, author=request.user).exists()
+
+    def get_recipes(self, obj):
+        recipes = obj.recipes.all()[:RECIPES_LIMIT]
+        request = self.context.get('request')
+        return ShowRecipeAddedSerializer(
+            recipes,
+            many=True,
+            context={'request': request}
+        ).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+
+
+class FollowerRecipeSerializerDetails(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+    def get_image(self, obj):
+        req = self.context['request']
+        photo_url = obj.image.url
+        return req.build_absolute_uri(photo_url)
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    queryset = User.objects.all()
+    user = serializers.PrimaryKeyRelatedField(queryset=queryset)
+    author = serializers.PrimaryKeyRelatedField(queryset=queryset)
+
+    class Meta:
+        model = Follow
+        fields = (
+            'user',
+            'author'
+        )
+
+    def validate(self, data):
+        user = self.context.get('request').user
+        author_id = data['author'].id
+        follow_exist = Follow.objects.filter(
+            user=user,
+            author__id=author_id
+        ).exists()
+
+        if self.context.get('request').method == 'GET':
+            if user.id == author_id or follow_exist:
+                raise serializers.ValidationError(
+                    'Подписка существует')
+        return data
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return ShowFollowSerializer(
+            instance.author,
+            context=context).data
