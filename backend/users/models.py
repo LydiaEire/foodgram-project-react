@@ -51,6 +51,7 @@ class FoodgramUser(AbstractBaseUser, PermissionsMixin):
         max_length=150,
         unique=True,
     )
+    admin = models.BooleanField(default=False)
     first_name = models.CharField(max_length=150, verbose_name='Name')
     last_name = models.CharField(max_length=150, verbose_name='Surname')
     date_joined = models.DateTimeField(

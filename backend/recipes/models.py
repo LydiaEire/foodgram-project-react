@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from users.models import FoodgramUser
+
 User = get_user_model()
 
 
@@ -66,8 +68,8 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
+        FoodgramUser,
+        on_delete=models.SET_NULL,
         related_name='recipes',
         verbose_name='Автор',
         null=True
