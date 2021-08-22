@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
+from users.serializers import ShowRecipeAddedSerializer
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag, TagsInRecipe)
-# from users.serializers import UserSerializer
-
-from drf_extra_fields.fields import Base64ImageField
 
 User = get_user_model()
 
@@ -79,7 +78,7 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
-    author = serializers.StringRelatedField()
+    author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     ingredients = AddIngredientToRecipeSerializer(many=True)
     tags = serializers.SlugRelatedField(
         many=True,
@@ -99,7 +98,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             if int(item['amount']) < 0:
                 raise serializers.ValidationError(
                     {'ingredients': (
-                        'Убедитесь, что количества ингредиента больше 0')
+                        'Убедитесь, что количество больше 0')
                     }
                 )
         return data
@@ -107,7 +106,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def validate_cooking_time(self, data):
         if data <= 0:
             raise serializers.ValidationError(
-                'Введите целое число больше 0 для времени готовки'
+                'Введите целое число больше 0'
             )
         return data
 

@@ -9,7 +9,6 @@ from rest_framework.views import APIView
 from .filters import IngredientFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
-from .paginator import FoodgramPaginator
 from .permissions import AdminOrAuthorOrReadOnly
 from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
                           IngredientSerializer, ShoppingCartSerializer,
@@ -17,7 +16,6 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [AllowAny, ]
@@ -25,17 +23,15 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny, ]
     filter_class = IngredientFilter
-    search_fields = ('name', )
+    search_fields = ('name',)
     pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-
     queryset = Recipe.objects.all()
     permission_classes = [AdminOrAuthorOrReadOnly, ]
     filter_class = RecipeFilter
@@ -51,8 +47,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(viewsets.ModelViewSet):
-
+class FavoriteViewSet(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, recipe_id):
@@ -83,9 +78,10 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShoppingCartViewSet(viewsets.ModelViewSet):
-
+class ShoppingCartViewSet(APIView):
     permission_classes = [IsAuthenticated, ]
+    queryset = ShoppingCart.objects.all()
+    serializer_class = ShowRecipeSerializer
 
     def get(self, request, recipe_id):
         user = request.user
@@ -119,7 +115,6 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def download_shopping_cart(request):
-
     user = request.user
     shopping_cart = user.shopping_cart.all()
     buying_list = {}
@@ -145,4 +140,3 @@ def download_shopping_cart(request):
     response = HttpResponse(wishlist, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
     return response
-

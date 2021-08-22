@@ -2,8 +2,8 @@ from django.contrib.auth import authenticate, get_user_model
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from recipes.models import Recipe
 from foodgram.settings import RECIPES_LIMIT
+from recipes.models import Recipe
 from .models import Follow
 
 User = get_user_model()
@@ -145,7 +145,7 @@ class FollowSerializer(serializers.ModelSerializer):
         if self.context.get('request').method == 'GET':
             if user.id == author_id or follow_exist:
                 raise serializers.ValidationError(
-                    'Подписка существует')
+                    'Подписка уже существует')
         return data
 
     def to_representation(self, instance):

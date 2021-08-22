@@ -29,7 +29,7 @@ class ListFollowViewSet(generics.ListAPIView):
 class FollowViewSet(APIView):
     """
     APIView with post and delete options.
-    Used to create and delete Follow objects.
+    Is used to create and delete Follow objects.
     """
     permission_classes = [IsAuthenticated, ]
 

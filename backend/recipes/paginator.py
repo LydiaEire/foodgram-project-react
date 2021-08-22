@@ -6,6 +6,7 @@ class FoodgramPaginator(Paginator):
     """
     Prevent 404 error
     """
+
     def validate_number(self, number):
         try:
             return super().validate_number(number)

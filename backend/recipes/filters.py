@@ -17,15 +17,15 @@ class RecipeFilter(filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('is_favorited', 'tags', 'author', 'is_in_shopping_cart', )
+        fields = ('is_favorited', 'tags', 'author', 'is_in_shopping_cart',)
 
-    def get_favorite(self, queryset, name, value):
+    def get_favorite(self, value):
         user = self.request.user
         if value:
             return Recipe.objects.filter(favorites__user=user).distinct()
         return Recipe.objects.all()
 
-    def get_is_in_shopping_cart(self, queryset, name, value):
+    def get_is_in_shopping_cart(self, value):
         user = self.request.user
         if value:
             return Recipe.objects.filter(shopping_cart__user=user)
@@ -37,4 +37,4 @@ class IngredientFilter(filters.FilterSet):
 
     class Meta:
         model = Ingredient
-        fields = ('name', )
+        fields = ('name',)
