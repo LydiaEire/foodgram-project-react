@@ -45,10 +45,10 @@ class FoodgramUser(AbstractBaseUser, PermissionsMixin):
         default=timezone.now, verbose_name='Registration date'
     )
     is_active = models.BooleanField(default=True, verbose_name='Active')
-    is_staff = models.BooleanField(default=False)  # an admin user; not super-user
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']  # Email & Password are required by default.
+    REQUIRED_FIELDS = ['username']
 
     objects = FoodgramUserManager()
 
@@ -65,10 +65,6 @@ class FoodgramUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Follow(models.Model):
-    """
-    'Follow' model is described
-    """
-
     user = models.ForeignKey(
         FoodgramUser,
         on_delete=models.CASCADE,

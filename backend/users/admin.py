@@ -4,11 +4,6 @@ from .models import FoodgramUser, Follow
 
 
 class UserAdmin(admin.ModelAdmin):
-    """
-    The fields to be used in displaying the User model.
-    These override the definitions on the base UserAdmin,
-    that reference specific fields on auth.User.
-    """
     list_display = ['id', 'username', 'email',
                     'first_name', 'last_name', 'is_staff']
     list_filter = ['email', 'username']

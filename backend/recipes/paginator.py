@@ -3,9 +3,6 @@ from django.http import Http404
 
 
 class FoodgramPaginator(Paginator):
-    """
-    Prevent 404 error
-    """
 
     def validate_number(self, number):
         try:

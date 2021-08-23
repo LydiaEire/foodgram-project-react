@@ -10,11 +10,6 @@ User = get_user_model()
 
 
 class UserSerializerModified(UserSerializer):
-    """
-    Describes modified UserSerializer, including
-    'is_subscribed' field
-    """
-
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
@@ -29,9 +24,6 @@ class UserSerializerModified(UserSerializer):
 
 
 class MyAuthTokenSerializer(serializers.Serializer):
-    """
-    Describes Auth serializer,that uses email-password to generate token.
-    """
     email = serializers.EmailField(label="Email")
     password = serializers.CharField(
         label="Password",
@@ -70,10 +62,6 @@ class ShowRecipeAddedSerializer(serializers.ModelSerializer):
 
 
 class FollowRecipeSerializer(serializers.ModelSerializer):
-    """
-    Describes Recipe Serializer, which used in FollowSerializer
-    """
-
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
