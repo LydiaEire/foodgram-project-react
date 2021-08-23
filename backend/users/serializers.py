@@ -134,6 +134,11 @@ class FollowSerializer(serializers.ModelSerializer):
             if user.id == author_id or follow_exist:
                 raise serializers.ValidationError(
                     'Подписка уже существует')
+
+        if self.context.get('request').method == 'DELETE':
+            if not follow_exist:
+                raise serializers.ValidationError(
+                    'Подписки не существует')
         return data
 
     def to_representation(self, instance):

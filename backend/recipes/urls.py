@@ -18,12 +18,12 @@ urlpatterns = [
     ),
     path(
         'recipes/<int:recipe_id>/favorite/',
-        FavoriteViewSet,
+        FavoriteViewSet.as_view(),
         name='favorite'
     ),
     path(
         'recipes/<int:recipe_id>/shopping_cart/',
-        ShoppingCartViewSet,
+        ShoppingCartViewSet.as_view(),
         name='shopping_cart'
     ),
     path('', include(v1_router.urls)),

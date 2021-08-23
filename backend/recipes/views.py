@@ -47,7 +47,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(viewsets. ModelViewSet):
+class FavoriteViewSet(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, recipe_id):
@@ -56,11 +56,7 @@ class FavoriteViewSet(viewsets. ModelViewSet):
             "user": user.id,
             "recipe": recipe_id,
         }
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
-            return Response(
-                {"Ошибка": "Уже в избранном"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+
         serializer = FavoriteSerializer(
             data=data,
             context={"request": request}
@@ -72,13 +68,20 @@ class FavoriteViewSet(viewsets. ModelViewSet):
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not Favorite.objects.filter(user=user, recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = {
+            "user": user.id,
+            "recipe": recipe_id,
+        }
+        serializer = FavoriteSerializer(
+            data=data,
+            context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
         Favorite.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShoppingCartViewSet(viewsets.ModelViewSet):
+class ShoppingCartViewSet(APIView):
     permission_classes = [IsAuthenticated, ]
     queryset = ShoppingCart.objects.all()
     serializer_class = ShowRecipeSerializer
@@ -89,15 +92,6 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
             "user": user.id,
             "recipe": recipe_id,
         }
-        shopping_cart_exist = ShoppingCart.objects.filter(
-            user=user,
-            recipe__id=recipe_id
-        ).exists()
-        if shopping_cart_exist:
-            return Response(
-                {"Ошибка": "Уже есть в корзине"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         context = {'request': request}
         serializer = ShoppingCartSerializer(data=data, context=context)
         serializer.is_valid(raise_exception=True)
@@ -107,8 +101,13 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = {
+            "user": user.id,
+            "recipe": recipe_id,
+        }
+        context = {'request': request}
+        serializer = ShoppingCartSerializer(data=data, context=context)
+        serializer.is_valid(raise_exception=True)
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
