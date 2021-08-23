@@ -47,7 +47,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(APIView):
+class FavoriteViewSet(viewsets. ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, recipe_id):
@@ -78,7 +78,7 @@ class FavoriteViewSet(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShoppingCartViewSet(APIView):
+class ShoppingCartViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
     queryset = ShoppingCart.objects.all()
     serializer_class = ShowRecipeSerializer

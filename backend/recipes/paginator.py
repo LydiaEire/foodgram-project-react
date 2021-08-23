@@ -11,4 +11,4 @@ class FoodgramPaginator(Paginator):
             if number > 1 or number == 0:
                 return self.num_pages
             else:
-                Http404(f'Page with number {number} was not found')
+                raise Http404(f'Page with number {number} was not found')
