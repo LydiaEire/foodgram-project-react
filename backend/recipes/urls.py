@@ -18,12 +18,12 @@ urlpatterns = [
     ),
     path(
         'recipes/<int:recipe_id>/favorite/',
-        FavoriteViewSet.as_view(),
+        FavoriteViewSet.as_view({'get': 'add', 'delete': 'remove'}),
         name='favorite'
     ),
     path(
         'recipes/<int:recipe_id>/shopping_cart/',
-        ShoppingCartViewSet.as_view(),
+        ShoppingCartViewSet.as_view({'get': 'add', 'delete': 'remove'}),
         name='shopping_cart'
     ),
     path('', include(v1_router.urls)),

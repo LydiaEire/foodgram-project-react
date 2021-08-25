@@ -12,7 +12,7 @@ urlpatterns = [
     ),
     path(
         'users/<int:author_id>/subscribe/',
-        FollowViewSet.as_view(),
+        FollowViewSet.as_view({'get': 'get', 'delete': 'delete'}),
         name='subscribe'
     ),
     path('', include('djoser.urls')),

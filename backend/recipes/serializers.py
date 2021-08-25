@@ -164,13 +164,13 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ('user', 'recipe')
 
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        return ShowRecipeAddedSerializer(
-            instance.recipe,
-            context={'request': request}
-        ).data
-
+    # def to_representation(self, instance):
+    #     request = self.context.get('request')
+    #     return ShowRecipeAddedSerializer(
+    #         instance.recipe,
+    #         context={'request': request}
+    #     ).data
+    #
     def validate(self, data):
         method = None
         request = self.context.get("request")

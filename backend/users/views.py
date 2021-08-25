@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import FoodgramUser, Follow
 from .serializers import FollowSerializer, ShowFollowSerializer
@@ -26,7 +25,7 @@ class ListFollowViewSet(viewsets.ModelViewSet):
         return FoodgramUser.objects.filter(following__user=user)
 
 
-class FollowViewSet(APIView):
+class FollowViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, author_id):

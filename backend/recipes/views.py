@@ -4,7 +4,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .filters import IngredientFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
@@ -47,10 +46,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(APIView):
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteSerializer
     permission_classes = [IsAuthenticated, ]
 
-    def get(self, request, recipe_id):
+    def add(self, request, recipe_id):
         user = request.user
         data = {
             "user": user.id,
@@ -65,7 +65,7 @@ class FavoriteViewSet(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, recipe_id):
+    def remove(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
         data = {
@@ -81,12 +81,12 @@ class FavoriteViewSet(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShoppingCartViewSet(APIView):
+class ShoppingCartViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, ]
     queryset = ShoppingCart.objects.all()
     serializer_class = ShowRecipeSerializer
 
-    def get(self, request, recipe_id):
+    def add(self, request, recipe_id):
         user = request.user
         data = {
             "user": user.id,
@@ -98,7 +98,7 @@ class ShoppingCartViewSet(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, recipe_id):
+    def remove(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
         data = {
