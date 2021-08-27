@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from users.serializers import ShowRecipeAddedSerializer
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag, TagsInRecipe)
 
@@ -10,9 +9,11 @@ User = get_user_model()
 
 
 class TagSerializer(serializers.ModelSerializer):
+    color = serializers.CharField(source='hexcolor')
+
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'hexcolor', 'slug')
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -164,13 +165,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ('user', 'recipe')
 
-    # def to_representation(self, instance):
-    #     request = self.context.get('request')
-    #     return ShowRecipeAddedSerializer(
-    #         instance.recipe,
-    #         context={'request': request}
-    #     ).data
-    #
     def validate(self, data):
         method = None
         request = self.context.get("request")
