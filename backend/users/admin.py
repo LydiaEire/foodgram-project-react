@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import FoodgramUser, Follow
+from .models import Follow, FoodgramUser
 
 
 class UserAdmin(admin.ModelAdmin):
