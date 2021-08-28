@@ -102,7 +102,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'ingredients': (
                         'Убедитесь, что количество больше 0')
-                     }
+                    }
                 )
         return data
 
@@ -193,8 +193,10 @@ class ShoppingCartSerializer(FavoriteSerializer):
         if request and hasattr(request, "user"):
             method = request.method
         if method == 'DELETE':
-            if not ShoppingCart.objects.filter(user=data.get('user'),
-                                               recipe=data.get('recipe')).exists():
+            if not ShoppingCart.objects.filter(
+                    user=data.get('user'),
+                    recipe=data.get(
+                        'recipe')).exists():
                 raise serializers.ValidationError("Не в корзине")
         else:
             if ShoppingCart.objects.filter(user=data.get('user'),
