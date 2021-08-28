@@ -78,7 +78,8 @@ class Recipe(models.Model):
         Tag,
         through='TagsInRecipe'
     )
-    name = models.CharField(max_length=200, verbose_name='Название', default=None)
+    name = models.CharField(max_length=200,
+                            verbose_name='Название', default=None)
     text = models.TextField(verbose_name='Описание', null=True)
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(

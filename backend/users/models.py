@@ -23,7 +23,8 @@ class FoodgramUserManager(BaseUserManager):
         return self._create_user(email, username, password)
 
     def create_superuser(self, email, username, password):
-        return self._create_user(email, username, password, is_staff=True, is_superuser=True)
+        return self._create_user(email, username, password,
+                                 is_staff=True, is_superuser=True)
 
 
 class FoodgramUser(AbstractBaseUser, PermissionsMixin):
@@ -38,8 +39,10 @@ class FoodgramUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
     )
     admin = models.BooleanField(default=False)
-    first_name = models.CharField(max_length=150, verbose_name='Name')
-    last_name = models.CharField(max_length=150, verbose_name='Surname')
+    first_name = models.CharField(max_length=150,
+                                  verbose_name='Name')
+    last_name = models.CharField(max_length=150,
+                                 verbose_name='Surname')
     date_joined = models.DateTimeField(
         default=timezone.now, verbose_name='Registration date'
     )
