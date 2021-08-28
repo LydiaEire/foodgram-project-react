@@ -30,6 +30,15 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     def get(self, request, author_id):
         user = request.user
+        follow_exist = Follow.objects.filter(
+            user=user,
+            author__id=author_id
+        ).exists()
+        if user.id == author_id or follow_exist:
+            return Response(
+                {"Fail": "Ошибка"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         data = {
             'user': user.id,
             'author': author_id
@@ -40,13 +49,28 @@ class FollowViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, author_id):
-        user = request.user
-        data = {
-            'user': user.id,
-            'author': author_id
-        }
-        serializer = FollowSerializer(data=data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
         obj = get_object_or_404(Follow, user=request.user, author=author_id)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    # def get(self, request, author_id):
+    #     user = request.user
+    #     data = {
+    #         'user': user.id,
+    #         'author': author_id
+    #     }
+    #     serializer = FollowSerializer(data=data, context={'request': request})
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #
+    # def delete(self, request, author_id):
+    #     user = request.user
+    #     data = {
+    #         'user': user.id,
+    #         'author': author_id
+    #     }
+    #     serializer = FollowSerializer(data=data, context={'request': request})
+    #     serializer.is_valid(raise_exception=True)
+    #     obj = get_object_or_404(Follow, user=request.user, author=author_id)
+    #     obj.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
