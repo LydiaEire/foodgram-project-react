@@ -19,12 +19,12 @@ class FoodgramUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, username, password):
-        return self._create_user(email, username, password)
+    def create_user(self, email, username, password, **extra_fields):
+        return self._create_user(email, username, password, **extra_fields)
 
-    def create_superuser(self, email, username, password):
+    def create_superuser(self, email, username, password, **extra_fields):
         return self._create_user(email, username, password,
-                                 is_staff=True, is_superuser=True)
+                                 is_staff=True, is_superuser=True, **extra_fields)
 
 
 class FoodgramUser(AbstractBaseUser, PermissionsMixin):

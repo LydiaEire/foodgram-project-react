@@ -4,7 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'bzlb%@*qdr19iu3a1k)248hhqsk_fxg5d+wuhzb6&0-(do4xxp'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -14,8 +14,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'colorfield',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
@@ -80,7 +78,7 @@ RECIPES_LIMIT = 6
 DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
-    'SERIALIZERS': {'user': 'users.serializers.UserSerializer'},
+    'SERIALIZERS': {'user': 'users.serializers.UserSerializerModified'},
     'HIDE_USERS': False,
     'PERMISSIONS': {'user_list': ['rest_framework.permissions.AllowAny'],
                     'user': ['rest_framework.permissions.AllowAny']},
@@ -88,11 +86,21 @@ DJOSER = {
 }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+     'default': {
+         'ENGINE': 'django.db.backends.sqlite3',
+         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+     }
+ }
+# DATABASES = {
+#      'default': {
+#          'ENGINE': os.environ.get('DB_ENGINE'),
+#          'NAME': os.environ.get('DB_NAME'),
+#          'USER': os.environ.get('POSTGRES_USER'),
+#          'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+#          'HOST': os.environ.get('DB_HOST'),
+#          'PORT': os.environ.get('DB_PORT'),
+#      }
+#  }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

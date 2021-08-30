@@ -3,16 +3,16 @@ version: '3.3'
 services:
   db:
     env_file:
-      - .env
+      - ../backend/.env
     image: postgres:12.4
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     restart: always
 
   frontend:
-    image: lydiaeire/foodgram
-    #      context: ../frontend
-    #      dockerfile: Dockerfile
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
 
@@ -20,15 +20,18 @@ services:
       - db
 
   backend:
-    image: lydiaeire/foodgram
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/code/static/
       - media_value:/code/media/
     depends_on:
       - db
+      - frontend
     env_file:
-      - ./.env
+      - ../backend/.env
 
 
   nginx:
@@ -46,8 +49,7 @@ services:
       - backend
       - frontend
 
-  volumes:
-      result_build:
-      postgres_data:
-      static_value:
-      media_value:
+volumes:
+    postgres_data:
+    static_value:
+    media_value:

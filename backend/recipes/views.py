@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -17,23 +19,26 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [AllowAny]
     pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny, ]
+    filter_backends = (SearchFilter, DjangoFilterBackend)
     filter_class = IngredientFilter
     search_fields = ('name', )
     pagination_class = None
 
+    def get_queryset(self):
+        return Ingredient.objects.filter()
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
     permission_classes = [AdminOrAuthorOrReadOnly, ]
     filter_class = RecipeFilter
+    filter_backends = (SearchFilter, DjangoFilterBackend)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -44,6 +49,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context.update({'request': self.request})
         return context
+
+    def get_queryset(self):
+        return Recipe.objects.filter()
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
