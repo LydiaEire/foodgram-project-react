@@ -3,6 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from users.serializers import UserSerializerModified
+
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag, TagsInRecipe)
 
