@@ -30,7 +30,7 @@ Pillow==8.3.1
 psycopg2>=2.8,<2.9
 psycopg2-binary>=2.8,<2.9
 pycparser==2.20
-PyJWT==1.7.1
+PyJWT
 python3-openid==3.2.0
 pytz==2021.1
 recipes==0.1
