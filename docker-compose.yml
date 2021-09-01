@@ -3,7 +3,7 @@ version: '3.3'
 services:
   db:
     env_file:
-      - ../backend/.env
+      - backend/.env
     image: postgres:12.4
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -14,7 +14,7 @@ services:
 
   frontend:
     build:
-      context: ../frontend
+      context: frontend
       dockerfile: frontend/Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
@@ -24,7 +24,7 @@ services:
 
   backend:
     build:
-      context: ../backend
+      context: backend
       dockerfile: backend/Dockerfile
     restart: always
     volumes:
@@ -34,7 +34,7 @@ services:
       - db
       - frontend
     env_file:
-      - ../backend/.env
+      - backend/.env
 
 
   nginx:
