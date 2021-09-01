@@ -3,7 +3,7 @@ version: '3.3'
 services:
   db:
     env_file:
-      - backend/.env
+      - .env
     image: postgres:12.4
     volumes:
       - postgres_data:/var/lib/postgresql/data/
@@ -34,7 +34,7 @@ services:
       - db
       - frontend
     env_file:
-      - backend/.env
+      - .env
 
 
   nginx:
