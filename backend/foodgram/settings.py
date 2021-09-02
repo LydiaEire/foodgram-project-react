@@ -6,7 +6,7 @@ SECRET_KEY = 'bzlb%@*qdr19iu3a1k)248hhqsk_fxg5d+wuhzb6&0-(do4xxp'
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*', '62.84.114.38', 'localhost']
+ALLOWED_HOSTS = ['*', '62.84.113.248', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.auth',
