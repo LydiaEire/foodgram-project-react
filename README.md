@@ -36,6 +36,11 @@ DB_HOST=db_host
 DB_PORT=db_port
 
 #### Адрес сервера:
+http://62.84.113.248/
 
 #### Для панели администратора:
+
+admin: super@pangur-ban.ru
+
+password: 123456789qwerty
 
