@@ -1,3 +1,5 @@
+![foodgram_workflow](https://github.com/LydiaEire/foodgram-project-react/actions/workflows/foodgram_main.yml/badge.svg)
+
 # Foodgram
 ### Описание
 Проект **Foodgram** позволяет делиться рецептами и скачивать списки продуктов
@@ -29,10 +31,15 @@ docker pull tamir88/foodgram-project-react :latest
 Пример .env файла:
 
 DB_ENGINE=my_db
+
 DB_NAME=db_name
+
 POSTGRES_USER=postgres
+
 POSTGRES_PASSWORD=postgres
+
 DB_HOST=db_host
+
 DB_PORT=db_port
 
 #### Адрес сервера:
