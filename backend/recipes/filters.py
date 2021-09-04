@@ -24,31 +24,25 @@ class RecipeFilter(filters.FilterSet):
             tags__slug__in=tags
         ).distinct()
 
-    def get_favorite(self, value, queryset, is_favorited, slug):
+    def get_favorite(self, queryset, value, is_favorited, slug=None):
         user = self.request.user
         if not user.is_authenticated:
             return queryset
-        is_favorited = self.request.query_params.get(
-            'is_favorited',
-        )
         if is_favorited:
             return queryset.filter(
-                is_favorited__user=self.request.user
+                favorites__user=self.request.user
             ).distinct()
         return queryset
 
     def get_is_in_shopping_cart(
-            self, value, queryset,
-            is_in_shopping_cart, slug):
+            self, queryset, value,
+            is_in_shopping_cart):
         user = self.request.user
         if not user.is_authenticated:
             return queryset
-        is_in_shopping_cart = self.request.query_params.get(
-            'is_in_shopping_cart',
-        )
         if is_in_shopping_cart:
             return queryset.filter(
-                is_in_shopping_cart__user=self.request.user
+                shopping_cart__user=self.request.user
             ).distinct()
         return queryset
 
