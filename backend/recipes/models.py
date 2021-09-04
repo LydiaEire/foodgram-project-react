@@ -11,11 +11,13 @@ class Tag(models.Model):
     PURPLE = '#9370db'
     GREEN = '#32cd32'
     ORANGE = '#ff8c00'
+    AQUAMARINE = '#458b74'
 
     COLOR_CHOICES = [
         (PURPLE, 'Фиолетовый'),
         (GREEN, 'Зелёный'),
         (ORANGE, 'Оранжевый'),
+        (AQUAMARINE, 'Аквамарин'),
     ]
 
     name = models.CharField(
