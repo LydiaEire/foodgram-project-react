@@ -102,8 +102,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             if int(item['amount']) < 0:
                 raise serializers.ValidationError(
                     {'ingredients':
-                         'Убедитесь, что количество '
-                         'ингредиента больше 0'
+                        'Убедитесь, что количество '
+                        'ингредиента больше 0'
                      }
                 )
             id = ingredients.get('id')
