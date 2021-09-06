@@ -2,9 +2,7 @@ from django.contrib.auth import authenticate, get_user_model
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from foodgram.settings import RECIPES_LIMIT
 from recipes.models import Recipe
-
 from .models import Follow
 
 User = get_user_model()
@@ -71,32 +69,32 @@ class FollowRecipeSerializer(serializers.ModelSerializer):
 
 class ShowFollowSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
-    recipes = serializers.SerializerMethodField()
+    recipes = FollowRecipeSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed', 'recipes', 'recipes_count')
-        read_only_fields = fields
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+            "recipes",
+            "recipes_count",
+        )
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return obj.follower.filter(user=obj, author=request.user).exists()
-
-    def get_recipes(self, obj):
-        recipes = obj.recipes.all()[:RECIPES_LIMIT]
-        request = self.context.get('request')
-        return ShowRecipeAddedSerializer(
-            recipes,
-            many=True,
-            context={'request': request}
-        ).data
+        user = request.user
+        return Follow.objects.filter(author=obj, user=user).exists()
 
     def get_recipes_count(self, obj):
-        return obj.recipes.count()
+        recipes = Recipe.objects.filter(author=obj)
+        return recipes.count()
 
 
 class FollowerRecipeSerializerDetails(serializers.ModelSerializer):

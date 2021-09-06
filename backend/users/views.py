@@ -4,25 +4,20 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Follow, FoodgramUser
+from .filters import FollowFilter
+from .models import Follow
 from .serializers import FollowSerializer, ShowFollowSerializer
 
 User = get_user_model()
 
 
-class ListFollowViewSet(viewsets.ModelViewSet):
-    queryset = FoodgramUser.objects.all()
+class ListFollowViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, ]
+    filter_class = FollowFilter
     serializer_class = ShowFollowSerializer
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({'request': self.request})
-        return context
-
     def get_queryset(self):
-        user = self.request.user
-        return FoodgramUser.objects.filter(following__user=user)
+        return User.objects.filter(following__user=self.request.user)
 
 
 class FollowViewSet(viewsets.ModelViewSet):

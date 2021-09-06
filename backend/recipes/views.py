@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.filters import SearchFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -35,10 +36,23 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         return Ingredient.objects.filter()
 
 
+class RecipeResultsSetPagination(PageNumberPagination):
+    page_size = 6
+
+    def paginate_queryset(self, queryset, request, view=None):
+        is_in_shopping_cart = request.query_params.get(
+            'is_in_shopping_cart',
+        )
+        if is_in_shopping_cart:
+            self.page_size = 999
+        return super().paginate_queryset(queryset, request, view)
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [AdminOrAuthorOrReadOnly, ]
     filter_class = RecipeFilter
     filter_backends = (SearchFilter, DjangoFilterBackend)
+    pagination_class = RecipeResultsSetPagination
 
     def get_serializer_class(self):
         if self.request.method == 'GET':

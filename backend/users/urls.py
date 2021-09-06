@@ -7,7 +7,7 @@ urlpatterns = [
 
     path(
         'users/subscriptions/',
-        ListFollowViewSet,
+        ListFollowViewSet.as_view({'get': 'list'}),
         name='subscriptions'
     ),
     path(
