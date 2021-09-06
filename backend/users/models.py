@@ -44,14 +44,12 @@ class FoodgramUser(AbstractBaseUser, PermissionsMixin):
                                   verbose_name='Name')
     last_name = models.CharField(max_length=150,
                                  verbose_name='Surname')
-    date_joined = models.DateTimeField(
-        default=timezone.now, verbose_name='Registration date'
-    )
+
     is_active = models.BooleanField(default=True, verbose_name='Active')
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
 
     objects = FoodgramUserManager()
 

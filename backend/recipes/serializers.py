@@ -114,7 +114,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
         return data
 
-
     def validate_cooking_time(self, data):
         if data <= 0:
             raise serializers.ValidationError(
