@@ -14,11 +14,13 @@ class TagAdmin(admin.ModelAdmin):
 class TagsInRecipeInline(admin.TabularInline):
     model = TagsInRecipe
     extra = 1
+    min_num = 1
 
 
 class IngredientInRecipeAdminInline(admin.TabularInline):
     model = IngredientInRecipe
     extra = 1
+    min_num = 1
 
 
 class RecipeAdmin(admin.ModelAdmin):
